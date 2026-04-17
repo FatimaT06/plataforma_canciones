@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import UploadSong from "./pages/UploadSong";
+import AdminRoute from "./components/AdminRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -10,6 +12,14 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/upload"
+          element={
+            <AdminRoute>
+              <UploadSong />
+            </AdminRoute>
+          }
+        />
 
         <Route
           path="/"

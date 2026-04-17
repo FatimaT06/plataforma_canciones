@@ -12,7 +12,7 @@ db.connect(err => {
   if (err) {
     console.error("Error DB:", err);
   } else {
-    console.log("MySQL conectado 🚀");
+    console.log("MySQL conectado");
   }
 });
 

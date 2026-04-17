@@ -31,7 +31,8 @@ exports.login = (req, res) => {
         user: {
           id: user.id,
           nombre: user.nombre,
-          email: user.email
+          email: user.email,
+          rol: user.rol
         }
       });
     }
@@ -44,8 +45,8 @@ exports.register = async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
 
     db.query(
-        "INSERT INTO usuarios (nombre,email,password) VALUES (?,?,?)",
-        [nombre, email, hash],
+        "INSERT INTO usuarios (nombre,email,password, rol) VALUES (?,?,?, ?)",
+        [nombre, email, hash, "user"],
         async (err) => {
         if (err) return res.status(500).json(err);
 

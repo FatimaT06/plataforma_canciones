@@ -1,19 +1,19 @@
-const nodemailer = require("nodemailer");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
-const sendEmail = async (email) => {
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASS
-        }
-    });
+const sendEmail = async (toEmail) => {
+  const client = SibApiV3Sdk.ApiClient.instance;
 
-    await transporter.sendMail({
-        to: email,
-        subject: "Bienvenido",
-        html: "<h1>Cuenta creada correctamente</h1>"
-    });
+  const apiKey = client.authentications["api-key"];
+  apiKey.apiKey = process.env.BREVO_API_KEY;
+
+  const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
+
+  await tranEmailApi.sendTransacEmail({
+    sender: { email: "fatima.torres061102@gmail.com", name: "A&F Music" },
+    to: [{ email: toEmail }],
+    subject: "Bienvenido 🎧",
+    htmlContent: "<h1>Tu cuenta fue creada correctamente</h1>"
+  });
 };
 
 module.exports = sendEmail;

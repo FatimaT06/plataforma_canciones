@@ -12,6 +12,8 @@ export default function Login() {
 
     saveToken(res.data.token);
 
+    localStorage.setItem("user", JSON.stringify(res.data.user));
+
     navigate("/");
   };
 
@@ -31,6 +33,7 @@ export default function Login() {
       />
 
       <button onClick={handleLogin}>Entrar</button>
+      <button onClick={() => navigate("/register")}>Registrarse</button>
     </div>
   );
 }

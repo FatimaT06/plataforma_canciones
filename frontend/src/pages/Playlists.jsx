@@ -7,6 +7,7 @@ export default function Playlists() {
   const [playlists, setPlaylists] = useState([]);
   const [songs, setSongs] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(null);
+  const [activeId, setActiveId] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -25,10 +26,9 @@ export default function Playlists() {
     const res = await API.get(`/playlists/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-
-    console.log("songs:", res.data);
     setSongs(res.data);
     setCurrentIndex(null);
+    setActiveId(id);
   };
 
   return (
@@ -39,7 +39,7 @@ export default function Playlists() {
           {playlists.map(p => (
             <button
               key={p.id}
-              className="btn"
+              className={`btn playlist-tab ${activeId === p.id ? "active" : ""}`}
               onClick={() => loadSongs(p.id)}
             >
               {p.nombre}
@@ -47,41 +47,39 @@ export default function Playlists() {
           ))}
         </div>
 
-        <h2>Canciones</h2>
+        <h2 className="section-title">Canciones</h2>
 
         {songs.length === 0 ? (
-          <p>No hay canciones</p>
+          <p className="empty-msg">Selecciona una playlist para ver sus canciones</p>
         ) : (
           <div className="songs-grid">
             {songs.map((song, index) => (
               <div key={song.id} className="song-card">
-
                 <img src={song.imagen} alt={song.nombre} />
-
                 <div className="song-info">
                   <div className="song-title">{song.nombre}</div>
                   <div className="song-artist">{song.artista}</div>
                 </div>
-
-                <button
-                  className="play-button"
-                  onClick={() => setCurrentIndex(index)}
-                >
-                  ▶
-                </button>
-
+                <div className="song-actions">
+                  <button
+                    className="play-button"
+                    onClick={() => setCurrentIndex(index)}
+                  >
+                    ▶
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
 
       </div>
+
       <Player
         songs={songs}
         currentIndex={currentIndex}
         setCurrentIndex={setCurrentIndex}
       />
-
     </div>
   );
 }

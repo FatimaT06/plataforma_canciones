@@ -19,7 +19,7 @@ export default function Layout() {
   return (
     <div className="home">
       <div className="home-header">
-        <h1>A&F Music</h1>
+        <h2>A&F Music</h2>
 
         <div className="user-section">
           <span>{user?.nombre}</span>

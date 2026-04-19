@@ -18,6 +18,8 @@ export default function UploadSong() {
   const [generos, setGeneros] = useState([]);
   const [imagen, setImagen] = useState(null);
   const [audio, setAudio] = useState(null);
+  const [imagenNombre, setImagenNombre] = useState("Ningún archivo seleccionado");
+  const [audioNombre, setAudioNombre] = useState("Ningún archivo seleccionado");
 
   const imagenRef = useRef();
   const audioRef = useRef();
@@ -34,18 +36,14 @@ export default function UploadSong() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-
     const data = new FormData();
     Object.keys(form).forEach(key => data.append(key, form[key]));
-
     if (imagen) data.append("imagen", imagen);
     if (audio) data.append("audio", audio);
-
     try {
       await API.post("/songs/upload", data, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
       alert("Canción subida");
       navigate("/");
     } catch {
@@ -55,10 +53,10 @@ export default function UploadSong() {
 
   return (
     <div className="container-center">
-      <div className="card-glass" style={{ width: "400px" }}>
+      <div className="upload-card">
         <h2 className="title">Subir canción</h2>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="upload-form">
 
           <div className="input-group">
             <input className="input" name="nombre" placeholder=" " value={form.nombre} onChange={handleChange}/>
@@ -81,7 +79,14 @@ export default function UploadSong() {
           </div>
 
           <div className="input-group">
-            <input type="date" className="input" name="fecha_lanzamiento" value={form.fecha_lanzamiento} onChange={handleChange}/>
+            <input
+              type="date"
+              className="input"
+              name="fecha_lanzamiento"
+              value={form.fecha_lanzamiento}
+              onChange={handleChange}
+            />
+            <label className="label label-static">Fecha de lanzamiento</label>
           </div>
 
           <select className="select" name="genero_id" value={form.genero_id} onChange={handleChange}>
@@ -91,19 +96,49 @@ export default function UploadSong() {
             ))}
           </select>
 
-          <div style={{ textAlign: "left", marginTop: "10px" }}>
-            <label>Imagen:</label>
-            <input type="file" ref={imagenRef} onChange={e => setImagen(e.target.files[0])}/>
+          <div className="file-field">
+            <span className="file-label">Imagen</span>
+            <button
+              type="button"
+              className="file-btn"
+              onClick={() => imagenRef.current.click()}
+            >
+              Seleccionar archivo
+            </button>
+            <span className="file-name">{imagenNombre}</span>
+            <input
+              type="file"
+              ref={imagenRef}
+              style={{ display: "none" }}
+              onChange={e => {
+                setImagen(e.target.files[0]);
+                setImagenNombre(e.target.files[0]?.name || "Ningún archivo seleccionado");
+              }}
+            />
           </div>
 
-          <div style={{ textAlign: "left", marginTop: "10px" }}>
-            <label>Audio:</label>
-            <input type="file" ref={audioRef} onChange={e => setAudio(e.target.files[0])}/>
+          <div className="file-field">
+            <span className="file-label">Audio</span>
+            <button
+              type="button"
+              className="file-btn"
+              onClick={() => audioRef.current.click()}
+            >
+              Seleccionar archivo
+            </button>
+            <span className="file-name">{audioNombre}</span>
+            <input
+              type="file"
+              ref={audioRef}
+              style={{ display: "none" }}
+              onChange={e => {
+                setAudio(e.target.files[0]);
+                setAudioNombre(e.target.files[0]?.name || "Ningún archivo seleccionado");
+              }}
+            />
           </div>
 
-          <button className="btn-primary" style={{ marginTop: "15px" }}>
-            Subir canción
-          </button>
+          <button className="btn-primary">Subir canción</button>
 
           <button
             type="button"

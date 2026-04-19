@@ -8,7 +8,6 @@ import "../styles/app.css";
 export default function Home() {
   const [songs, setSongs] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(null);
-
   const [playlists, setPlaylists] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedSong, setSelectedSong] = useState(null);
@@ -48,32 +47,21 @@ export default function Home() {
   const addToPlaylist = async (playlist_id) => {
     await API.post(
       "/playlists/add-song",
-      {
-        playlist_id,
-        song_id: selectedSong.id
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
+      { playlist_id, song_id: selectedSong.id },
+      { headers: { Authorization: `Bearer ${token}` } }
     );
-
     alert("Agregado");
     setShowModal(false);
   };
 
   const createPlaylist = async () => {
     if (!newPlaylist) return alert("Escribe un nombre");
-
     const res = await API.post(
       "/playlists",
       { nombre: newPlaylist },
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
-
     await addToPlaylist(res.data.id);
-
     setNewPlaylist("");
     loadPlaylists();
   };
@@ -81,50 +69,36 @@ export default function Home() {
   return (
     <div className="home">
       <div className="home-header">
-        <h1>A&F Music</h1>
-
+        <h2>A&F Music</h2>
         <div className="user-section">
           <span>{user?.nombre}</span>
-
           <button onClick={() => navigate("/playlists")}>Playlists</button>
-
           {user?.rol === "admin" && (
-            <button onClick={() => navigate("/upload")}>
-              + Subir
-            </button>
+            <button onClick={() => navigate("/upload")}>+ Subir</button>
           )}
-
-          <button onClick={handleLogout}>
-            Cerrar sesión
-          </button>
+          <button onClick={handleLogout}>Cerrar sesión</button>
         </div>
       </div>
 
       <div className="songs-grid">
         {songs.map((song, index) => (
           <div key={song.id} className="song-card">
-
             <img src={song.imagen} alt={song.nombre} />
-
             <div className="song-info">
               <div className="song-title">{song.nombre}</div>
               <div className="song-artist">{song.artista}</div>
             </div>
-
-            <button
-              className="play-button"
-              onClick={() => setCurrentIndex(index)}
-            >
-              ▶
-            </button>
-
-            <button
-              className="btn"
-              onClick={() => openModal(song)}
-            >
-              + Playlist
-            </button>
-
+            <div className="song-actions">
+              <button
+                className="play-button"
+                onClick={() => setCurrentIndex(index)}
+              >
+                ▶
+              </button>
+              <button className="btn" onClick={() => openModal(song)}>
+                + Playlist
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -132,42 +106,33 @@ export default function Home() {
       {showModal && (
         <div className="modal">
           <div className="modal-content">
-
             <h3>Agregar a playlist</h3>
             {playlists.map(p => (
-              <button
-                key={p.id}
-                className="btn"
-                onClick={() => addToPlaylist(p.id)}
-              >
+              <button key={p.id} className="btn" onClick={() => addToPlaylist(p.id)}>
                 {p.nombre}
               </button>
             ))}
-
             <hr />
             <input
               placeholder="Nueva playlist"
               value={newPlaylist}
               onChange={(e) => setNewPlaylist(e.target.value)}
             />
-
             <button className="btn" onClick={createPlaylist}>
               Crear y agregar
             </button>
-
             <button className="btn cancel" onClick={() => setShowModal(false)}>
               Cancelar
             </button>
-
           </div>
         </div>
       )}
+
       <Player
         songs={songs}
         currentIndex={currentIndex}
         setCurrentIndex={setCurrentIndex}
       />
-
     </div>
   );
 }

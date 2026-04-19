@@ -1,13 +1,25 @@
 const router = require("express").Router();
-const { getSongs, uploadSong } = require("../controllers/songs.controller");
+const {
+  getSongs,
+  uploadSong,
+  playSong,
+  recommendAI
+} = require("../controllers/songs.controller");
+
 const auth = require("../middlewares/auth.middleware");
 const admin = require("../middlewares/admin.middleware");
 const upload = require("../middlewares/upload.middleware");
 
-console.log("UPLOAD:", typeof upload);
-
+// 🎧 canciones
 router.get("/", getSongs);
 
+// 🎧 guardar historial
+router.post("/play", auth, playSong);
+
+// 🤖 IA
+router.get("/recommend-ai", auth, recommendAI);
+
+// 🎧 subir canción
 router.post(
   "/upload",
   auth,

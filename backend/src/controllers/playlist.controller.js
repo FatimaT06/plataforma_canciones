@@ -1,11 +1,7 @@
 const db = require("../config/db");
 
-
-// ✅ Crear playlist
 exports.createPlaylist = (req, res) => {
   const { nombre } = req.body;
-
-  // ⚠️ validar user
   if (!req.user) {
     return res.status(401).json({ message: "No autorizado" });
   }

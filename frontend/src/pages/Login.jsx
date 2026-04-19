@@ -2,38 +2,51 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { saveToken } from "../services/auth";
+import "../styles/app.css";
 
 export default function Login() {
   const [form, setForm] = useState({});
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    const res = await API.post("/auth/login", form);
+    try {
+      const res = await API.post("/auth/login", form);
 
-    saveToken(res.data.token);
+      saveToken(res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-
-    navigate("/");
+      navigate("/");
+    } catch (err) {
+      alert("Error al iniciar sesión");
+    }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="auth-container">
 
-      <input
-        placeholder="Email"
-        onChange={e => setForm({...form, email: e.target.value})}
-      />
+      <div className="auth-box">
+        <h2>Iniciar Sesión</h2>
 
-      <input
-        type="password"
-        placeholder="Password"
-        onChange={e => setForm({...form, password: e.target.value})}
-      />
+        <input
+          placeholder="Email"
+          onChange={e => setForm({ ...form, email: e.target.value })}
+        />
 
-      <button onClick={handleLogin}>Entrar</button>
-      <button onClick={() => navigate("/register")}>Registrarse</button>
+        <input
+          type="password"
+          placeholder="Password"
+          onChange={e => setForm({ ...form, password: e.target.value })}
+        />
+
+        <button onClick={handleLogin}>
+          Entrar
+        </button>
+
+        <p onClick={() => navigate("/register")}>
+          ¿No tienes cuenta? Regístrate
+        </p>
+      </div>
+
     </div>
   );
 }

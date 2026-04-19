@@ -5,6 +5,8 @@ import Login from "./pages/Login";
 import UploadSong from "./pages/UploadSong";
 import AdminRoute from "./components/AdminRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
+import Playlists from "./pages/Playlists";
 
 function App() {
   return (
@@ -12,23 +14,36 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
         <Route
-          path="/upload"
-          element={
-            <AdminRoute>
-              <UploadSong />
-            </AdminRoute>
-          }
-        />
+          path="/"
+        >
+          <Route index element={<Home />} />
+        </Route>
 
         <Route
           path="/"
           element={
             <ProtectedRoute>
-              <Home />
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="playlists" element={<Playlists />} />
+        </Route>
+
+        <Route
+          path="/upload"
+          element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <Layout />
+                <UploadSong />
+              </AdminRoute>
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </BrowserRouter>
   );

@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/recommendation_provider.dart';
 import '../providers/auth_provider.dart';
-import '../providers/song_provider.dart';
+import '../providers/playlist_provider.dart';  // <-- Agregar esta importación
+import '../models/song.dart';  // <-- Agregar esta importación
 import '../widgets/song_card.dart';
 import '../widgets/loading_widget.dart';
 import '../utils/color_constants.dart';
 import 'player_screen.dart';
 
 class RecommendationsScreen extends StatefulWidget {
+  const RecommendationsScreen({Key? key}) : super(key: key);
+
   @override
   _RecommendationsScreenState createState() => _RecommendationsScreenState();
 }
@@ -40,31 +43,31 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
     return RefreshIndicator(
       onRefresh: _loadRecommendations,
       child: recommendationProvider.isLoading
-          ? LoadingWidget()
+          ? const LoadingWidget()
           : recommendationProvider.recommendations.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.recommend, size: 80, color: Colors.grey),
-                      SizedBox(height: 16),
-                      Text(
+                      const Icon(Icons.recommend, size: 80, color: Colors.grey),
+                      const SizedBox(height: 16),
+                      const Text(
                         'No hay recomendaciones aún',
                         style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),
-                      SizedBox(height: 8),
-                      Text(
+                      const SizedBox(height: 8),
+                      const Text(
                         'Escucha más canciones para recibir recomendaciones',
                         style: TextStyle(fontSize: 14, color: Colors.grey),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
                       ElevatedButton(
                         onPressed: _loadRecommendations,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                         ),
-                        child: Text('Actualizar'),
+                        child: const Text('Actualizar'),
                       ),
                     ],
                   ),
@@ -73,7 +76,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [AppColors.primary, AppColors.primaryLight],
@@ -82,7 +85,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Recomendaciones para ti',
                             style: TextStyle(
                               fontSize: 24,
@@ -90,22 +93,22 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 8),
-                          Text(
+                          const SizedBox(height: 8),
+                          const Text(
                             'Basado en tus gustos musicales',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.white70,
                             ),
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Container(
-                            padding: EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Row(
+                            child: const Row(
                               children: [
                                 Icon(Icons.auto_awesome, color: Colors.white),
                                 SizedBox(width: 12),
@@ -123,7 +126,7 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                     ),
                     Expanded(
                       child: ListView.builder(
-                        padding: EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.only(top: 8),
                         itemCount: recommendationProvider.recommendations.length,
                         itemBuilder: (context, index) {
                           final song = recommendationProvider.recommendations[index];
@@ -163,26 +166,26 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
     
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
         return Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Agregar a playlist',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               if (playlistProvider.playlists.isEmpty)
-                Padding(
+                const Padding(
                   padding: EdgeInsets.all(32),
                   child: Text('No tienes playlists creadas'),
                 )
@@ -200,20 +203,22 @@ class _RecommendationsScreenState extends State<RecommendationsScreen> {
                         songId,
                       );
                       
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            success
-                                ? 'Canción agregada a ${playlist.name}'
-                                : 'Error al agregar canción',
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              success
+                                  ? 'Canción agregada a ${playlist.name}'
+                                  : 'Error al agregar canción',
+                            ),
+                            backgroundColor: success ? Colors.green : Colors.red,
                           ),
-                          backgroundColor: success ? Colors.green : Colors.red,
-                        ),
-                      );
+                        );
+                      }
                     },
                   );
                 }),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
             ],
           ),
         );

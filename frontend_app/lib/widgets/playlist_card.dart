@@ -7,14 +7,15 @@ class PlaylistCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const PlaylistCard({
+    Key? key,
     required this.playlist,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: 2,
       child: ListTile(
         leading: Container(
@@ -32,7 +33,7 @@ class PlaylistCard extends StatelessWidget {
         ),
         title: Text(
           playlist.name,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text('${playlist.songs.length} canciones'),
         trailing: Icon(Icons.chevron_right, color: AppColors.primary),

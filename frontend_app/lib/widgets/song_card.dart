@@ -9,16 +9,17 @@ class SongCard extends StatelessWidget {
   final VoidCallback? onTrailingTap;
 
   const SongCard({
+    Key? key,
     required this.song,
     required this.onTap,
     this.trailingIcon,
     this.onTrailingTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: 2,
       child: ListTile(
         leading: Container(
@@ -36,7 +37,7 @@ class SongCard extends StatelessWidget {
         ),
         title: Text(
           song.title,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text('${song.artist} • ${song.genre}'),
         trailing: trailingIcon != null

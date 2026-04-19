@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/song_provider.dart';
 import '../providers/playlist_provider.dart';
-import '../providers/recommendation_provider.dart';
+import '../models/song.dart';
 import '../widgets/song_card.dart';
 import '../widgets/loading_widget.dart';
 import '../utils/color_constants.dart';

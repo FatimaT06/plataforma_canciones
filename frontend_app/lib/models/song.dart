@@ -4,7 +4,6 @@ class Song {
   final String artist;
   final String genre;
   final String url;
-  bool isPlaying;
 
   Song({
     required this.id,
@@ -12,19 +11,19 @@ class Song {
     required this.artist,
     required this.genre,
     required this.url,
-    this.isPlaying = false,
   });
 
   factory Song.fromJson(Map<String, dynamic> json) {
     return Song(
       id: json['id'].toString(),
-      title: json['title'] ?? '',
-      artist: json['artist'] ?? '',
-      genre: json['genre'] ?? '',
+      title: json['title'] ?? 'Sin título',
+      artist: json['artist'] ?? 'Artista desconocido',
+      genre: json['genre'] ?? 'Otro',
       url: json['url'] ?? '',
     );
   }
 
+  // Agregar el método toJson
   Map<String, dynamic> toJson() {
     return {
       'id': id,

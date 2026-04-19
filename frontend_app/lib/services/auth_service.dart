@@ -6,8 +6,11 @@ import '../models/user.dart';
 class AuthService {
   Future<Map<String, dynamic>> register(String name, String email, String password) async {
     try {
+      final url = Uri.parse(ApiConfig.getFullUrl(ApiConfig.register));
+      print('📝 Registrando en: $url');
+      
       final response = await http.post(
-        Uri.parse(ApiConfig.getFullUrl(ApiConfig.register)),
+        url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'name': name,
@@ -15,6 +18,9 @@ class AuthService {
           'password': password,
         }),
       );
+
+      print('📡 Register response: ${response.statusCode}');
+      print('📄 Register body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
@@ -31,6 +37,7 @@ class AuthService {
         };
       }
     } catch (e) {
+      print('❌ Register error: $e');
       return {
         'success': false,
         'message': 'Error de conexión: ${e.toString()}',
@@ -40,8 +47,11 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
+      final url = Uri.parse(ApiConfig.getFullUrl(ApiConfig.login));
+      print('🔐 Login en: $url');
+      
       final response = await http.post(
-        Uri.parse(ApiConfig.getFullUrl(ApiConfig.login)),
+        url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': email,
@@ -49,8 +59,14 @@ class AuthService {
         }),
       );
 
+      print('📡 Login response status: ${response.statusCode}');
+      print('📄 Login response body: ${response.body}');
+
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('✅ Login exitoso');
+        print('🔑 Token recibido: ${data['token']?.substring(0, 20)}...');
+        
         final user = User.fromJson(data['user']);
         user.token = data['token'];
         
@@ -61,12 +77,14 @@ class AuthService {
         };
       } else {
         final data = json.decode(response.body);
+        print('❌ Login fallido: ${data['message']}');
         return {
           'success': false,
           'message': data['message'] ?? 'Error en el login',
         };
       }
     } catch (e) {
+      print('❌ Login error: $e');
       return {
         'success': false,
         'message': 'Error de conexión: ${e.toString()}',

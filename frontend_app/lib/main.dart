@@ -24,12 +24,16 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RecommendationProvider()),
       ],
       child: MaterialApp(
-        title: 'Music App',
+        title: 'A&F Music',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.red,
+          primaryColor: const Color(0xFFDF3232),
+          colorScheme: ColorScheme.light(
+            primary: const Color(0xFFDF3232),
+            secondary: const Color(0xFFDF3232),
+          ),
+          fontFamily: 'Poppins',
           useMaterial3: true,
-          fontFamily: 'Roboto',
         ),
         initialRoute: '/',
         routes: {

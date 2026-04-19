@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/custom_button.dart';
-import '../utils/color_constants.dart';
-import 'register_screen.dart';
+import '../providers/song_provider.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,178 +10,128 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  void _login() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Completa todos los campos')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.login(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    if (success && mounted) {
+      // Cargar canciones después del login
+      final songProvider = Provider.of<SongProvider>(context, listen: false);
+      await songProvider.loadSongs(authProvider.token!);
+      
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+    } else {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al iniciar sesión')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.primary, AppColors.primaryDark],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFDF3232), Color(0xFF8B1E1E)],
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(24),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 50),
-                Icon(
-                  Icons.music_note,
-                  size: 80,
-                  color: Colors.white,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Bienvenido',
+                const Icon(Icons.music_note, size: 80, color: Colors.white),
+                const SizedBox(height: 20),
+                const Text(
+                  'A&F Music',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-                Text(
-                  'Inicia sesión para continuar',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white70,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 50),
-                Card(
-                  elevation: 10,
-                  shape: RoundedRectangleBorder(
+                const SizedBox(height: 50),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: _emailController,
-                            decoration: InputDecoration(
-                              labelText: 'Correo electrónico',
-                              prefixIcon: Icon(Icons.email),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor ingrese su email';
-                              }
-                              if (!value.contains('@')) {
-                                return 'Ingrese un email válido';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 16),
-                          TextFormField(
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
-                            decoration: InputDecoration(
-                              labelText: 'Contraseña',
-                              prefixIcon: Icon(Icons.lock),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
-                                },
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor ingrese su contraseña';
-                              }
-                              if (value.length < 6) {
-                                return 'La contraseña debe tener al menos 6 caracteres';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 24),
-                          Consumer<AuthProvider>(
-                            builder: (context, authProvider, child) {
-                              return CustomButton(
-                                text: 'Iniciar Sesión',
-                                isLoading: authProvider.isLoading,
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    final success = await authProvider.login(
-                                      _emailController.text,
-                                      _passwordController.text,
-                                    );
-                                    
-                                    if (success) {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => HomeScreen(),
-                                        ),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Error al iniciar sesión'),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
-                                  }
-                                },
-                              );
-                            },
-                          ),
-                        ],
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Correo',
+                          prefixIcon: Icon(Icons.email),
+                          border: OutlineInputBorder(),
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Contraseña',
+                          prefixIcon: Icon(Icons.lock),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _login,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFDF3232),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text('Iniciar Sesión'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      '¿No tienes cuenta? ',
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    const Text('¿No tienes cuenta?', style: TextStyle(color: Colors.white70)),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RegisterScreen(),
-                          ),
-                        );
+                        Navigator.pushNamed(context, '/register');
                       },
-                      child: Text(
-                        'Regístrate',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: const Text('Regístrate', style: TextStyle(color: Colors.white)),
                     ),
                   ],
                 ),
@@ -193,12 +141,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 }

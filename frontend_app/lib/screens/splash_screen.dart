@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -38,31 +38,59 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.primary, AppColors.primaryDark],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFFDF3232),
+              const Color(0xFFDF3232).withOpacity(0.8),
+              const Color(0xFF8B1E1E),
+            ],
           ),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.music_note,
-                size: 100,
-                color: Colors.white,
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Music App',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
                   color: Colors.white,
+                  borderRadius: BorderRadius.circular(40),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.music_note,
+                  size: 70,
+                  color: Color(0xFFDF3232),
                 ),
               ),
-              SizedBox(height: 10),
-              CircularProgressIndicator(
+              const SizedBox(height: 30),
+              const Text(
+                'A&F Music',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 3,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Tu música, tu estilo',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70,
+                ),
+              ),
+              const SizedBox(height: 50),
+              const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             ],

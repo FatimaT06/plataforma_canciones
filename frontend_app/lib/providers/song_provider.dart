@@ -6,33 +6,25 @@ class SongProvider with ChangeNotifier {
   final SongService _songService = SongService();
   List<Song> _songs = [];
   bool _isLoading = false;
+  String? _error;
 
   List<Song> get songs => _songs;
   bool get isLoading => _isLoading;
+  String? get error => _error;
 
   Future<void> loadSongs(String token) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      _songs = await _songService.getAllSongs(token);
+      _songs = await _songService.getSongs(token);
     } catch (e) {
-      print('Error loading songs: $e');
+      _error = e.toString();
+      _songs = [];
     }
 
     _isLoading = false;
     notifyListeners();
-  }
-
-  List<Song> getSongsByGenre(String genre) {
-    return _songs.where((song) => song.genre == genre).toList();
-  }
-
-  Song? getSongById(String id) {
-    try {
-      return _songs.firstWhere((song) => song.id == id);
-    } catch (e) {
-      return null;
-    }
   }
 }
